@@ -1,0 +1,16 @@
+{
+  "name": "theprime-gala-seating",
+  "version": "1.0.0",
+  "description": "ThePrime Gala 2026 Seating Lookup",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

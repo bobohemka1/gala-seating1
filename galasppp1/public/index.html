@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ThePrime Gala 2026 | Find Your Table</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #0a0a0a;
+      --bg-secondary: #141414;
+      --bg-card: #1a1a1a;
+      --gold: #c9a962;
+      --gold-light: #e8d5a3;
+      --gold-dark: #a68b4b;
+      --text-primary: #ffffff;
+      --text-secondary: #888888;
+      --text-muted: #555555;
+      --border: #2a2a2a;
+      --error: #e85d5d;
+      --success: #5de88e;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+    }
+
+    body {
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Subtle animated background */
+    .bg-pattern {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        radial-gradient(ellipse at 20% 0%, rgba(201, 169, 98, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 100%, rgba(201, 169, 98, 0.05) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1.5rem;
+      max-width: 480px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .logo {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.9rem;
+      font-weight: 500;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
+    }
+
+    .title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(2.5rem, 8vw, 3.5rem);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      font-weight: 400;
+    }
+
+    .year {
+      color: var(--gold);
+    }
+
+    /* Search Card */
+    .search-card {
+      width: 100%;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .input-label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 0.75rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    .ticket-input {
+      width: 100%;
+      background: var(--bg-secondary);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      font-size: 1.5rem;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-weight: 600;
+      color: var(--text-primary);
+      text-align: center;
+      letter-spacing: 0.1em;
+      transition: all 0.3s ease;
+      -webkit-appearance: none;
+      -moz-appearance: textfield;
+    }
+
+    .ticket-input::-webkit-outer-spin-button,
+    .ticket-input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    .ticket-input::placeholder {
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    .ticket-input:focus {
+      outline: none;
+      border-color: var(--gold);
+      box-shadow: 0 0 0 4px rgba(201, 169, 98, 0.15);
+    }
+
+    .search-btn {
+      width: 100%;
+      margin-top: 1.25rem;
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+      border: none;
+      border-radius: 12px;
+      padding: 1rem 2rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--bg-primary);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .search-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(201, 169, 98, 0.3);
+    }
+
+    .search-btn:active {
+      transform: translateY(0);
+    }
+
+    /* Result Card */
+    .result-card {
+      width: 100%;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.4s ease;
+      pointer-events: none;
+    }
+
+    .result-card.visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .result-content {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .result-content.success {
+      border-color: var(--gold-dark);
+    }
+
+    .result-content.error {
+      border-color: var(--error);
+    }
+
+    .result-icon {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 1.5rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+
+    .result-content.success .result-icon {
+      background: linear-gradient(135deg, rgba(201, 169, 98, 0.2) 0%, rgba(201, 169, 98, 0.1) 100%);
+      border: 2px solid var(--gold);
+    }
+
+    .result-content.error .result-icon {
+      background: rgba(232, 93, 93, 0.1);
+      border: 2px solid var(--error);
+    }
+
+    .result-label {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .table-number {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 4rem;
+      font-weight: 700;
+      color: var(--gold);
+      line-height: 1;
+      margin-bottom: 1rem;
+    }
+
+    .table-info {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .company-list {
+      margin-top: 0.5rem;
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    .error-message {
+      color: var(--error);
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+
+    .error-hint {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 1.5rem;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+    }
+
+    .footer a {
+      color: var(--gold-dark);
+      text-decoration: none;
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .header {
+      animation: fadeInUp 0.6s ease forwards;
+    }
+
+    .search-card {
+      animation: fadeInUp 0.6s ease 0.1s forwards;
+      opacity: 0;
+      animation-fill-mode: forwards;
+    }
+
+    /* Loading state */
+    .search-btn.loading {
+      pointer-events: none;
+      opacity: 0.7;
+    }
+
+    .search-btn.loading::after {
+      content: '';
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      margin-left: 8px;
+      border: 2px solid var(--bg-primary);
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Mobile adjustments */
+    @media (max-width: 400px) {
+      .container {
+        padding: 1.5rem 1rem;
+      }
+      
+      .search-card {
+        padding: 1.5rem;
+      }
+      
+      .table-number {
+        font-size: 3.5rem;
+      }
+    }
+
+    /* Prevent zoom on iOS */
+    @media screen and (-webkit-min-device-pixel-ratio: 0) {
+      .ticket-input {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-pattern"></div>
+  
+  <div class="container">
+    <header class="header">
+      <div class="logo">ThePrime</div>
+      <h1 class="title">Gala <span class="year">2026</span></h1>
+      <p class="subtitle">Find Your Table</p>
+    </header>
+
+    <div class="search-card">
+      <label class="input-label" for="ticketInput">Ticket Number</label>
+      <div class="input-wrapper">
+        <input 
+          type="number" 
+          id="ticketInput" 
+          class="ticket-input" 
+          placeholder="1 – 480"
+          min="1" 
+          max="480"
+          inputmode="numeric"
+          pattern="[0-9]*"
+          autocomplete="off"
+        >
+      </div>
+      <button class="search-btn" id="searchBtn">Find My Table</button>
+    </div>
+
+    <div class="result-card" id="resultCard">
+      <div class="result-content" id="resultContent">
+        <!-- Results will be injected here -->
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <a href="https://theprime.cz" target="_blank">theprime.cz</a>
+  </footer>
+
+  <script>
+    // Seating data - will be loaded from API
+    let seatingData = null;
+
+    // Load seating data on page load
+    async function loadSeatingData() {
+      try {
+        const response = await fetch('/api/seating');
+        seatingData = await response.json();
+        console.log('Seating data loaded:', Object.keys(seatingData.tables).length, 'tables');
+      } catch (error) {
+        console.error('Failed to load seating data:', error);
+      }
+    }
+
+    // Find table by ticket number
+    function findTable(ticketNumber) {
+      if (!seatingData || !seatingData.tables) {
+        return { error: 'Seating data not loaded' };
+      }
+
+      const ticket = parseInt(ticketNumber);
+      
+      if (isNaN(ticket) || ticket < 1 || ticket > 480) {
+        return { error: 'invalid' };
+      }
+
+      // Search through all tables for the ticket number
+      for (const [tableNum, tableData] of Object.entries(seatingData.tables)) {
+        if (tableData.tickets && tableData.tickets.includes(ticket)) {
+          return {
+            table: tableNum,
+            type: tableData.type,
+            companies: tableData.companies
+          };
+        }
+      }
+
+      // Ticket not found in any table
+      return { error: 'not_found', ticket };
+    }
+
+    // Display result
+    function showResult(result) {
+      const resultCard = document.getElementById('resultCard');
+      const resultContent = document.getElementById('resultContent');
+
+      if (result.error) {
+        if (result.error === 'invalid') {
+          resultContent.innerHTML = `
+            <div class="result-icon">⚠️</div>
+            <p class="error-message">Invalid ticket number</p>
+            <p class="error-hint">Please enter a number between 1 and 480</p>
+          `;
+        } else if (result.error === 'not_found') {
+          resultContent.innerHTML = `
+            <div class="result-icon">🔍</div>
+            <p class="error-message">Ticket #${result.ticket} not found</p>
+            <p class="error-hint">Please check your ticket number or ask a hostess for help</p>
+          `;
+        } else {
+          resultContent.innerHTML = `
+            <div class="result-icon">⚠️</div>
+            <p class="error-message">Something went wrong</p>
+            <p class="error-hint">Please try again or ask a hostess for help</p>
+          `;
+        }
+        resultContent.className = 'result-content error';
+      } else {
+        const companiesText = result.companies.length > 1 
+          ? result.companies.join(' • ') 
+          : result.companies[0];
+        
+        resultContent.innerHTML = `
+          <div class="result-icon">🎫</div>
+          <p class="result-label">Your Table</p>
+          <div class="table-number">${result.table}</div>
+          <p class="table-info">
+            ${result.type} Table
+            <br>
+            <span class="company-list">${companiesText}</span>
+          </p>
+        `;
+        resultContent.className = 'result-content success';
+      }
+
+      resultCard.classList.add('visible');
+    }
+
+    // Handle search
+    function handleSearch() {
+      const input = document.getElementById('ticketInput');
+      const btn = document.getElementById('searchBtn');
+      const resultCard = document.getElementById('resultCard');
+      
+      const ticketNumber = input.value.trim();
+      
+      if (!ticketNumber) {
+        input.focus();
+        return;
+      }
+
+      // Hide previous result
+      resultCard.classList.remove('visible');
+      
+      // Show loading state briefly
+      btn.classList.add('loading');
+      
+      setTimeout(() => {
+        const result = findTable(ticketNumber);
+        showResult(result);
+        btn.classList.remove('loading');
+      }, 300);
+    }
+
+    // Event listeners
+    document.getElementById('searchBtn').addEventListener('click', handleSearch);
+    
+    document.getElementById('ticketInput').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        handleSearch();
+      }
+    });
+
+    // Clear result when input changes
+    document.getElementById('ticketInput').addEventListener('input', () => {
+      document.getElementById('resultCard').classList.remove('visible');
+    });
+
+    // Load data on page load
+    loadSeatingData();
+  </script>
+</body>
+</html>
